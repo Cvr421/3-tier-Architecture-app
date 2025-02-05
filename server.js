@@ -9,9 +9,6 @@ app.use(cors());
 app.use(express.json());
 
 
-
-
-
 // PostgreSQL Connection
 const pool = new Pool({
     user: process.env.DB_USER,
@@ -33,27 +30,6 @@ app.get("/users", async (req, res) => {
         res.status(500).send(err.message);
     }
 });
-
-
-
-
-
-
-
-
-
-
-
-app.use(cors());
-app.use(express.json());
-
-
-
-
-
-
-
-
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
