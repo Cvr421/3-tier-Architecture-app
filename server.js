@@ -1,22 +1,24 @@
-express = require("express");
-
+const express = require("express");
 const cors = require("cors");
-const { Pool } = require("pg"); // pg library is the official PostgreSQL client for Node.js
+const { Pool } = require("pg");
 require("dotenv").config();
 
 const app = express();
-app.use(cors());
+app.use(cors({ origin: "http://localhost:3000" })); // Allow frontend access
 app.use(express.json());
-
 
 // PostgreSQL Connection
 const pool = new Pool({
     user: process.env.DB_USER,
-    host: process.env.DB_HOST,
     database: process.env.DB_NAME,
+    host: process.env.DB_HOST,
     password: process.env.DB_PASS,
     port: 5432, 
 });
+
+pool.connect()
+    .then(() => console.log("Connected to PostgreSQL"))
+    .catch(err => console.error("PostgreSQL Connection Error:", err));
 
 app.get("/", (req, res) => {
     res.send("Backend is running!");
@@ -27,7 +29,8 @@ app.get("/users", async (req, res) => {
         const result = await pool.query("SELECT * FROM users");
         res.json(result.rows);
     } catch (err) {
-        res.status(500).send(err.message);
+        console.error("Database Query Error:", err);
+        res.status(500).json({ error: err.message });
     }
 });
 
